@@ -4,4 +4,8 @@ void main() {
   runApp(const MyApp());
 }
 
+Card {
+  widget{
 
+}
+}
