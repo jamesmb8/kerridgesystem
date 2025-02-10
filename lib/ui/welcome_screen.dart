@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'csv_uploader.dart';
+import 'uploader_screen.dart';
+//the first page
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,7 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const CSVUploader()),
                 );
               },
+              //the style of the button
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
