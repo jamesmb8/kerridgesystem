@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'uploader_screen.dart';
-//the first page
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,12 +19,12 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                // Navigate without 'const' as UploaderScreen is not a constant widget
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CSVUploader()),
+                  MaterialPageRoute(builder: (context) => UploaderScreen()),
                 );
               },
-              //the style of the button
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),

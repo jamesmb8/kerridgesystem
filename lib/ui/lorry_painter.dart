@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import '../models/package_model.dart';
+import '../models/lorry_model.dart';
+import 'uploader_screen.dart';
+import '../data/file_loader.dart';
+
+class LorryPainter extends CustomPainter {
+  final Lorry lorry;
+  final double scale;
+
+  LorryPainter({required this.lorry, required this.scale});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double lorryWidth = lorry.width * 100 * scale; // Lorry width in cm
+    double lorryLength = lorry.length * 100 * scale; // Lorry length in cm
+
+    // Center lorry in canvas
+    double lorryX = (size.width - lorryLength) / 2;
+    double lorryY = (size.height - lorryWidth) / 2;
+
+    // Draw lorry border
+    Paint lorryBorderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+
+    Rect lorryRect = Rect.fromLTWH(lorryX, lorryY, lorryLength, lorryWidth);
+    canvas.drawRect(lorryRect, lorryBorderPaint);
+
+    // Draw packages using precomputed positions
+    Paint packagePaint = Paint()
+      ..color = Colors.yellow
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < lorry.packagePositions.length; i++) {
+      Offset pos = lorry.packagePositions[i];
+      Package package = lorry.packages[i];
+
+      double packageWidth = package.width * scale;  // Package width in cm
+      double packageHeight = package.length * scale; // Package height in cm
+
+      Rect packageRect = Rect.fromLTWH(lorryX + pos.dx, lorryY + pos.dy, packageWidth, packageHeight);
+      canvas.drawRect(packageRect, packagePaint);
+
+      // Draw package ID
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(
+          text: '${package.countId}',
+          style: TextStyle(color: Colors.black, fontSize: 14),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: packageWidth);
+
+      textPainter.paint(
+        canvas,
+        Offset(lorryX + pos.dx + (packageWidth - textPainter.width) / 2,
+            lorryY + pos.dy + (packageHeight - textPainter.height) / 2),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
