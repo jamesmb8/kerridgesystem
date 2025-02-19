@@ -8,7 +8,9 @@ class Lorry {
   final double doorheight;
   final int maxweight;
   final List<Package> packages;
-  List<Offset> packagePositions = []; // To store the position of each package
+  List<Offset> packagePositions = [];
+
+  static const double padding = 2.0; // Small padding between packages
 
   Lorry({
     required this.ID,
@@ -18,49 +20,73 @@ class Lorry {
     this.maxweight = 10000,
     required this.packages,
   }) {
-    packagePositions = []; // Clear previous positions
-    calculatePackagePositions(1.0); // Default scale (adjust later)
+    packagePositions = [];
+    calculatePackagePositions(1.0);
   }
 
-  // Method to calculate the position of each package inside the lorry
   void calculatePackagePositions(double scale) {
     packagePositions.clear();
 
-    double maxWidth = length * 100 * scale; // Convert lorry length to cm
-    double maxHeight = width * 100 * scale; // Convert lorry width to cm
+    double maxWidth = length * 100 * scale;
+    double maxHeight = width * 100 * scale;
 
     debugPrint("Lorry Size: ${length * 100}cm x ${width * 100}cm (Scaled: $maxWidth x $maxHeight)");
 
-    double xOffset = 0.0;
-    double yOffset = 0.0;
-    double rowHeight = 0.0;
+    // Sort packages by height * width (largest first)
+    packages.sort((a, b) => (b.length * b.width).compareTo(a.length * a.width));
+
+    List<Rect> placedPackages = [];
+    List<Offset> availableSpaces = [Offset(0, 0)];
 
     for (var package in packages) {
-      double packageWidth = package.width * scale;  // Already in cm from CSV
-      double packageHeight = package.length * scale; // Already in cm from CSV
+      double packageWidth = (package.width * scale) + padding;
+      double packageHeight = (package.length * scale) + padding;
 
       debugPrint("Package Size: ${package.width}cm x ${package.length}cm (Scaled: $packageWidth x $packageHeight)");
 
-      // Prevent overflow
-      if (xOffset + packageWidth > maxWidth) {
-        xOffset = 0.0;
-        yOffset += rowHeight;
-        rowHeight = 0.0;
+      Offset? bestPosition;
+      double minWastedSpace = double.infinity;
+
+      for (var space in availableSpaces) {
+        Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+
+        // Ensure the new package does NOT overlap with existing ones
+        bool overlaps = placedPackages.any((p) => p.overlaps(newPackage));
+        if (overlaps) continue;
+
+        // Ensure it fits in the lorry
+        if (space.dx + packageWidth <= maxWidth && space.dy + packageHeight <= maxHeight) {
+          double wastedSpace = (maxWidth - (space.dx + packageWidth)) + (maxHeight - (space.dy + packageHeight));
+
+          if (wastedSpace < minWastedSpace) {
+            bestPosition = space;
+            minWastedSpace = wastedSpace;
+          }
+        }
       }
 
-      if (yOffset + packageHeight > maxHeight) {
-        debugPrint("Stopped placing: Not enough space.");
-        break; // Stop placing packages if there's no space
+      if (bestPosition == null) {
+        debugPrint("No available space found for package.");
+        break;
       }
 
-      packagePositions.add(Offset(xOffset, yOffset));
-      debugPrint("Placed at: ($xOffset, $yOffset)");
+      packagePositions.add(bestPosition);
+      Rect placedPackage = Rect.fromLTWH(bestPosition.dx, bestPosition.dy, packageWidth, packageHeight);
+      placedPackages.add(placedPackage);
 
-      xOffset += packageWidth;
-      rowHeight = packageHeight > rowHeight ? packageHeight : rowHeight;
+      debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy})");
+
+      // Remove overlapping spaces
+      availableSpaces.removeWhere((space) => placedPackages.any((p) => p.contains(space)));
+
+      // Add new valid positions (left to right filling)
+      availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy)); // Right side
+      availableSpaces.add(Offset(bestPosition.dx, bestPosition.dy + packageHeight)); // Bottom side
+
+      // Sort spaces to prioritize filling from left to right
+      availableSpaces.sort((a, b) => (a.dx == b.dx) ? a.dy.compareTo(b.dy) : a.dx.compareTo(b.dx));
     }
 
     debugPrint("Final Package Positions: $packagePositions");
   }
-
 }
