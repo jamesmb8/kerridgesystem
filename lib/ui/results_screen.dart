@@ -5,18 +5,31 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'lorry_painter.dart';
 
-class ResultsScreen extends StatelessWidget {
+class ResultsScreen extends StatefulWidget {
   final Lorry lorry;
 
   const ResultsScreen({Key? key, required this.lorry}) : super(key: key);
 
   @override
+  _ResultsScreenState createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  int _selectedLayer = 1; // Default to the first layer
+
+  void _changeLayer(int layerIndex) {
+    setState(() {
+      _selectedLayer = layerIndex;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double scale = calculateScaleBasedOnScreenDimensions(lorry, screenWidth, screenHeight);
+    double scale = calculateScaleBasedOnScreenDimensions(widget.lorry, screenWidth, screenHeight);
 
-    lorry.calculatePackagePositions(scale);
+    widget.lorry.calculatePackagePositions(scale);
 
     return Scaffold(
       appBar: AppBar(title: Text("Lorry Results")),
@@ -30,7 +43,11 @@ class ResultsScreen extends StatelessWidget {
                 width: screenWidth,
                 height: screenHeight * 0.4, // Adjust height for lorry visualization
                 child: CustomPaint(
-                  painter: LorryPainter(lorry: lorry, scale: scale),
+                  painter: LorryPainter(
+                      lorry: widget.lorry,
+                      scale: scale,
+                      selectedLayer: _selectedLayer
+                  ),
                 ),
               ),
             ),
@@ -41,12 +58,12 @@ class ResultsScreen extends StatelessWidget {
           Text("Packages in Lorry", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Expanded(
             flex: 2,
-            child: lorry.packages.isEmpty
+            child: widget.lorry.packages.isEmpty
                 ? Center(child: Text("No packages loaded", style: TextStyle(color: Colors.red)))
                 : ListView.builder(
-              itemCount: lorry.packages.length,
+              itemCount: widget.lorry.packages.length,
               itemBuilder: (context, index) {
-                Package package = lorry.packages[index];
+                Package package = widget.lorry.packages[index];
                 return ListTile(
                   title: Text("Package ${package.countId}: ${package.type}"),
                   subtitle: Text(
@@ -55,6 +72,26 @@ class ResultsScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
+          // Layer selection buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => _changeLayer(1),
+                child: const Text('Layer 1'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _changeLayer(2),
+                child: const Text('Layer 2'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () => _changeLayer(3),
+                child: const Text('Layer 3'),
+              ),
+            ],
           ),
         ],
       ),
@@ -75,5 +112,4 @@ class ResultsScreen extends StatelessWidget {
     debugPrint("Calculated Scale: $scale");
     return scale;  // Return the adjusted scale factor
   }
-
 }
