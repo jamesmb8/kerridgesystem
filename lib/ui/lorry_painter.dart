@@ -4,64 +4,73 @@ import '../models/package_model.dart';
 import '../models/lorry_model.dart';
 import 'uploader_screen.dart';
 import '../data/file_loader.dart';
-import '../ui/layer_buttons.dart';
 
 class LorryPainter extends CustomPainter {
   final Lorry lorry;
   final double scale;
-  final int selectedLayer; // Added to manage layer selection
+  final int selectedLayer;
 
   LorryPainter({required this.lorry, required this.scale, required this.selectedLayer});
 
   @override
   void paint(Canvas canvas, Size size) {
-    double lorryX = 0.0; // X position of the lorry
-    double lorryY = 0.0; // Y position of the lorry
-    double lorryWidth = lorry.width * scale;
-    double lorryHeight = lorry.length * scale;
+    double lorryWidth = lorry.width * 100 * scale; // Lorry width in cm
+    double lorryLength = lorry.length * 100 * scale; // Lorry length in cm
 
-    Paint lorryPaint = Paint()..color = Colors.grey.shade300; // Lorry base paint (gray)
-    Paint packagePaint = Paint()..color = Colors.blue; // Package paint (blue)
+    // Center lorry in canvas
+    double lorryX = (size.width - lorryLength) / 2;
+    double lorryY = (size.height - lorryWidth) / 2;
 
-    // Draw the base lorry (a large rectangle)
-    Rect lorryRect = Rect.fromLTWH(lorryX, lorryY, lorryWidth, lorryHeight);
-    canvas.drawRect(lorryRect, lorryPaint);
+    // Draw lorry border
+    Paint lorryBorderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
 
-    // Draw the packages on the selected layer
-    List<Offset> currentLayer = lorry.packagePositionsByLayer[selectedLayer - 1];
+    Rect lorryRect = Rect.fromLTWH(lorryX, lorryY, lorryLength, lorryWidth);
+    canvas.drawRect(lorryRect, lorryBorderPaint);
 
-    // Loop through each package in the selected layer
-    for (int i = 0; i < currentLayer.length; i++) {
-      Offset pos = currentLayer[i];
+    // Draw packages using precomputed positions
+    Paint packagePaint = Paint()
+      ..color = Colors.yellow
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < lorry.packagePositions.length; i++) {
       Package package = lorry.packages[i];
+      if (package.assignedLayer == selectedLayer) {
+        Offset pos = lorry.packagePositions[i];
 
-      double packageWidth = package.width * scale;  // Package width in cm
-      double packageHeight = package.length * scale; // Package height in cm
+        double packageWidth = package.width * scale; // Package width in cm
+        double packageHeight = package.length * scale; // Package height in cm
 
-      // Draw the package as a rectangle
-      Rect packageRect = Rect.fromLTWH(lorryX + pos.dx, lorryY + pos.dy, packageWidth, packageHeight);
-      canvas.drawRect(packageRect, packagePaint);
+        Rect packageRect = Rect.fromLTWH(
+            lorryX + pos.dx, lorryY + pos.dy, packageWidth, packageHeight);
+        canvas.drawRect(packageRect, packagePaint);
 
-      // Draw package ID text on the package
-      TextPainter textPainter = TextPainter(
-        text: TextSpan(
-          text: '${package.countId}',
-          style: TextStyle(color: Colors.black, fontSize: 14),
-        ),
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr,
-      )..layout(minWidth: 0, maxWidth: packageWidth);
+        // Draw package ID
+        TextPainter textPainter = TextPainter(
+          text: TextSpan(
+            text: '${package.countId}',
+            style: TextStyle(color: Colors.black, fontSize: 14),
+          ),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        )
+          ..layout(minWidth: 0, maxWidth: packageWidth);
 
-      textPainter.paint(
-        canvas,
-        Offset(lorryX + pos.dx + (packageWidth - textPainter.width) / 2,
-            lorryY + pos.dy + (packageHeight - textPainter.height) / 2),
-      );
+        textPainter.paint(
+          canvas,
+          Offset(lorryX + pos.dx + (packageWidth - textPainter.width) / 2,
+              lorryY + pos.dy + (packageHeight - textPainter.height) / 2),
+        );
+      }
     }
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;  // You can refine this logic if needed (e.g., only repaint if something changes)
+    @override
+    bool shouldRepaint(covariant LorryPainter oldDelegate) {
+      return oldDelegate.selectedLayer != selectedLayer ||
+          oldDelegate.scale != scale ||
+          oldDelegate.lorry != lorry;
+    }
   }
-}

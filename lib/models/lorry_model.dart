@@ -1,6 +1,5 @@
+import 'package_model.dart';
 import 'package:flutter/material.dart';
-import 'package_model.dart'; // Assuming this is your package model
-import '../ui/layer_buttons.dart';
 
 class Lorry {
   final int ID;
@@ -9,7 +8,9 @@ class Lorry {
   final double doorheight;
   final int maxweight;
   final List<Package> packages;
-  List<List<Offset>> packagePositionsByLayer = []; // Store positions of packages for each layer
+  List<Offset> packagePositions = [];
+
+  static const double padding = 2.0; // Small padding between packages
 
   Lorry({
     required this.ID,
@@ -19,61 +20,73 @@ class Lorry {
     this.maxweight = 10000,
     required this.packages,
   }) {
-    packagePositionsByLayer = [];
-    calculatePackagePositions(1.0); // Scale factor for packages
+    packagePositions = [];
+    calculatePackagePositions(1.0);
   }
 
   void calculatePackagePositions(double scale) {
-    packagePositionsByLayer.clear();
-    double maxWidth = length * 100 * scale; // Convert lorry length to cm
-    double maxHeight = width * 100 * scale; // Convert lorry width to cm
-    double currentHeight = 0.0; // Tracks the height for the current layer
-    double xOffset = 0.0;  // Tracks horizontal position in the current layer
-    double yOffset = 0.0;  // Tracks vertical position in the current layer
-    double rowHeight = 0.0; // Max height for the current row (used for line wrapping)
+    packagePositions.clear();
 
-    List<Offset> currentLayerPositions = [];
+    double maxWidth = length * 100 * scale;
+    double maxHeight = width * 100 * scale;
+
+    debugPrint("Lorry Size: ${length * 100}cm x ${width * 100}cm (Scaled: $maxWidth x $maxHeight)");
+
+    // Sort packages by height * width (largest first)
+    packages.sort((a, b) => (b.length * b.width).compareTo(a.length * a.width));
+
+    List<Rect> placedPackages = [];
+    List<Offset> availableSpaces = [Offset(0, 0)];
 
     for (var package in packages) {
-      double packageWidth = package.length * scale;
-      double packageHeight = package.width * scale;
+      double packageWidth = (package.width * scale) + padding;
+      double packageHeight = (package.length * scale) + padding;
 
-      // Check if the current package fits in the current layer (height-wise)
-      if (yOffset + packageHeight > maxHeight) {
-        // Move to the next layer
-        packagePositionsByLayer.add(currentLayerPositions);
-        currentLayerPositions = [];
-        yOffset = 0.0; // Reset vertical position
-        currentHeight += rowHeight;
-        rowHeight = 0.0;
+      debugPrint("Package Size: ${package.width}cm x ${package.length}cm (Scaled: $packageWidth x $packageHeight)");
 
-        // If we exceed the total height of the lorry, stop adding packages
-        if (currentHeight + packageHeight > maxHeight) {
-          debugPrint("Stopped placing: Not enough space.");
-          break;
+      Offset? bestPosition;
+      double minWastedSpace = double.infinity;
+
+      for (var space in availableSpaces) {
+        Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+
+        // Ensure the new package does NOT overlap with existing ones
+        bool overlaps = placedPackages.any((p) => p.overlaps(newPackage));
+        if (overlaps) continue;
+
+        // Ensure it fits in the lorry
+        if (space.dx + packageWidth <= maxWidth && space.dy + packageHeight <= maxHeight) {
+          double wastedSpace = (maxWidth - (space.dx + packageWidth)) + (maxHeight - (space.dy + packageHeight));
+
+          if (wastedSpace < minWastedSpace) {
+            bestPosition = space;
+            minWastedSpace = wastedSpace;
+          }
         }
       }
 
-      // Place the package
-      currentLayerPositions.add(Offset(xOffset, yOffset));
-
-      // Update xOffset for the next package in the row
-      xOffset += packageWidth;
-
-      // If the package is taller than the current row height, update rowHeight
-      rowHeight = packageHeight > rowHeight ? packageHeight : rowHeight;
-
-      // If the current package doesn't fit in the current row horizontally, start a new row
-      if (xOffset + packageWidth > maxWidth) {
-        xOffset = 0.0; // Reset to start of the next row
-        yOffset += rowHeight; // Move to next vertical position
+      if (bestPosition == null) {
+        debugPrint("No available space found for package.");
+        break;
       }
+
+      packagePositions.add(bestPosition);
+      Rect placedPackage = Rect.fromLTWH(bestPosition.dx, bestPosition.dy, packageWidth, packageHeight);
+      placedPackages.add(placedPackage);
+
+      debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy})");
+
+      // Remove overlapping spaces
+      availableSpaces.removeWhere((space) => placedPackages.any((p) => p.contains(space)));
+
+      // Add new valid positions (left to right filling)
+      availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy)); // Right side
+      availableSpaces.add(Offset(bestPosition.dx, bestPosition.dy + packageHeight)); // Bottom side
+
+      // Sort spaces to prioritize filling from left to right
+      availableSpaces.sort((a, b) => (a.dx == b.dx) ? a.dy.compareTo(b.dy) : a.dx.compareTo(b.dx));
     }
 
-    if (currentLayerPositions.isNotEmpty) {
-      packagePositionsByLayer.add(currentLayerPositions);
-    }
-
-    debugPrint("Package Positions by Layer: $packagePositionsByLayer");
+    debugPrint("Final Package Positions: $packagePositions");
   }
 }

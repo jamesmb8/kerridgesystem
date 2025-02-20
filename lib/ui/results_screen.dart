@@ -4,6 +4,7 @@ import '../models/package_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/painting.dart';
 import 'lorry_painter.dart';
+import 'layer_buttons.dart';
 
 class ResultsScreen extends StatefulWidget {
   final Lorry lorry;
@@ -33,7 +34,12 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Lorry Results")),
-      body: Column(
+      body: Container(
+        color: Colors.white,
+        child: Column(
+
+
+
         children: [
           // Lorry visualization
           Expanded(
@@ -46,7 +52,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   painter: LorryPainter(
                       lorry: widget.lorry,
                       scale: scale,
-                      selectedLayer: _selectedLayer
+                    selectedLayer: _selectedLayer,
+
                   ),
                 ),
               ),
@@ -74,26 +81,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
           ),
           // Layer selection buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () => _changeLayer(1),
-                child: const Text('Layer 1'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () => _changeLayer(2),
-                child: const Text('Layer 2'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () => _changeLayer(3),
-                child: const Text('Layer 3'),
-              ),
-            ],
+          LayerButtons(selectedLayer: _selectedLayer,
+              onLayerChanged: _changeLayer,
           ),
+          SizedBox(height: 15),
+
+
         ],
+      ),
       ),
     );
   }
