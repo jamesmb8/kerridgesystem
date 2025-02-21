@@ -59,8 +59,18 @@ class _ResultsScreenState extends State<ResultsScreen> {
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
+          const SizedBox(height: 15),
+
+          LayerButtons(selectedLayer: _selectedLayer,
+
+            onLayerChanged: _changeLayer,
+          ),
           SizedBox(height: 15),
+
+
+
+
           // Package list below the lorry visualization
           Text("Packages in Lorry", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Expanded(
@@ -81,10 +91,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
           ),
           // Layer selection buttons
-          LayerButtons(selectedLayer: _selectedLayer,
-              onLayerChanged: _changeLayer,
-          ),
-          SizedBox(height: 15),
+
 
 
         ],

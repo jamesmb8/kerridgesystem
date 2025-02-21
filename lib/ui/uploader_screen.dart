@@ -124,7 +124,35 @@ class _UploaderScreenState extends State<UploaderScreen> {
                 "assets/images/logoKerridge.png",
                 height: 100,
               ),
+              
             ),
+            Positioned(
+              right: 10,
+              top: 30,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF189281),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                ),
+                child: const Text(
+                  "Back",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+
             Center(
               child: SingleChildScrollView( // 🔥 Prevents bottom overflow
                 child: Padding(
@@ -163,10 +191,10 @@ class _UploaderScreenState extends State<UploaderScreen> {
                         ElevatedButton(
                           onPressed: loadCSV,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink,
+                            backgroundColor: const Color(0xFF189281),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
+                                horizontal: 50, vertical: 18),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -185,10 +213,10 @@ class _UploaderScreenState extends State<UploaderScreen> {
                           ElevatedButton(
                             onPressed: goToResultsScreen,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
+                              backgroundColor: const Color(0xFF189281),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 10),
+                                  horizontal: 50, vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
