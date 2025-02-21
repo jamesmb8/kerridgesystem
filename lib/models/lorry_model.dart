@@ -29,38 +29,54 @@ class Lorry {
 
     double maxWidth = length * 100 * scale;
     double maxHeight = width * 100 * scale;
+    double maxLorryHeight = 280.0;
 
     debugPrint("Lorry Size: ${length * 100}cm x ${width * 100}cm (Scaled: $maxWidth x $maxHeight)");
 
     // Sort packages by height * width (largest first)
-    packages.sort((a, b) => (b.length * b.width).compareTo(a.length * a.width));
+    packages.sort((a, b) {
+      int weightCompare = b.weight.compareTo(a.weight);
+      return weightCompare != 0 ? weightCompare : (b.length * b.width).compareTo(a.length * a.width);
+    });
 
-    List<Rect> placedPackages = [];
+    List<Map<String, dynamic>> placedPackages = [];
     List<Offset> availableSpaces = [Offset(0, 0)];
 
     for (var package in packages) {
       double packageWidth = (package.width * scale) + padding;
       double packageHeight = (package.length * scale) + padding;
+      double packageTotalHeight = package.height;
 
-      debugPrint("Package Size: ${package.width}cm x ${package.length}cm (Scaled: $packageWidth x $packageHeight)");
+      debugPrint("Package Size: ${package.width}cm x ${package.length}cm Height: ${package.height}cm");
 
       Offset? bestPosition;
       double minWastedSpace = double.infinity;
+      double bestBaseHeight = 0;
 
       for (var space in availableSpaces) {
-        Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+        double baseHeight = 0;
 
-        // Ensure the new package does NOT overlap with existing ones
-        bool overlaps = placedPackages.any((p) => p.overlaps(newPackage));
+        for (var placed in placedPackages) {
+          Rect placedRect = Rect.fromLTWH(placed["x"], placed["y"], placed["width"], placed["height"]);
+          Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+
+          if (placedRect.overlaps(newPackage) && package.weight <= placed["weight"]) {
+            baseHeight = placed["baseHeight"] + placed["packageHeight"];
+          }
+        }
+        if (baseHeight + packageTotalHeight > maxLorryHeight) continue;
+
+        Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+        bool overlaps = placedPackages.any((p) => Rect.fromLTWH(p["x"], p["y"], p["width"], p["height"]).overlaps(newPackage));
         if (overlaps) continue;
 
-        // Ensure it fits in the lorry
         if (space.dx + packageWidth <= maxWidth && space.dy + packageHeight <= maxHeight) {
           double wastedSpace = (maxWidth - (space.dx + packageWidth)) + (maxHeight - (space.dy + packageHeight));
 
           if (wastedSpace < minWastedSpace) {
             bestPosition = space;
             minWastedSpace = wastedSpace;
+            bestBaseHeight = baseHeight;
           }
         }
       }
@@ -70,14 +86,22 @@ class Lorry {
         break;
       }
 
-      packagePositions.add(bestPosition);
-      Rect placedPackage = Rect.fromLTWH(bestPosition.dx, bestPosition.dy, packageWidth, packageHeight);
-      placedPackages.add(placedPackage);
+      packagePositions.add(Offset(bestPosition.dx, bestPosition.dy));
+      placedPackages.add({
+        "x": bestPosition.dx,
+        "y": bestPosition.dy,
+        "width": packageWidth,
+        "height": packageHeight,
+        "packageHeight": packageTotalHeight,
+        "baseHeight": bestBaseHeight,
+        "weight": package.weight
+      });
 
-      debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy})");
+
+      debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy}) at height: $bestBaseHeight");
 
       // Remove overlapping spaces
-      availableSpaces.removeWhere((space) => placedPackages.any((p) => p.contains(space)));
+      availableSpaces.removeWhere((space) => placedPackages.any((p) => Rect.fromLTWH(p["x"], p["y"], p["width"], p["height"]).contains(space)));
 
       // Add new valid positions (left to right filling)
       availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy)); // Right side

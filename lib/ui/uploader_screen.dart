@@ -24,7 +24,8 @@ class _UploaderScreenState extends State<UploaderScreen> {
       if (result != null) {
         final bytes = result.files.single.bytes;
         final content = utf8.decode(bytes!);
-        List<List<dynamic>> csvTable = CsvToListConverter(eol: "\n").convert(content);
+        List<List<dynamic>> csvTable = CsvToListConverter(eol: "\n").convert(
+            content);
 
         print("CSV Raw Data: $csvTable"); // Debugging: Check CSV contents
 
@@ -53,7 +54,8 @@ class _UploaderScreenState extends State<UploaderScreen> {
               width: double.tryParse(row[8].toString()) ?? 0.0,
             );
 
-            print("Package loaded: ${package.countId} - ${package.length} x ${package.width} x ${package.height}");
+            print("Package loaded: ${package.countId} - ${package
+                .length} x ${package.width} x ${package.height}");
             // Debugging: Show package object
 
             loadedPackages.add(package);
@@ -79,7 +81,8 @@ class _UploaderScreenState extends State<UploaderScreen> {
     if (packages.isEmpty) {
       print("Cannot proceed, no packages loaded.");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("No packages loaded! Please upload a valid CSV."))
+          SnackBar(
+              content: Text("No packages loaded! Please upload a valid CSV."))
       );
       return;
     }
@@ -96,30 +99,109 @@ class _UploaderScreenState extends State<UploaderScreen> {
     print("Navigating to ResultsScreen with ${packages.length} packages.");
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ResultsScreen(lorry: loadedLorry)),
+      MaterialPageRoute(
+          builder: (context) => ResultsScreen(lorry: loadedLorry)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Upload CSV")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Colors.pink],
+          ),
+        ),
+        child: Stack(
           children: [
-            ElevatedButton(
-              onPressed: loadCSV,
-              child: Text("Upload CSV"),
-            ),
-            SizedBox(height: 20),
-            if (packages.isNotEmpty) ...[
-              Text("Loaded ${packages.length} packages."),
-              ElevatedButton(
-                onPressed: goToResultsScreen,
-                child: Text("View Results"),
+            Positioned(
+              left: 10,
+              top: 10, // Ensures the logo doesn't overlap content
+              child: Image.asset(
+                "assets/images/logoKerridge.png",
+                height: 100,
               ),
-            ]
+            ),
+            Center(
+              child: SingleChildScrollView( // 🔥 Prevents bottom overflow
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    width: double.infinity,
+                    // Allows content to expand properly
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    // Limits width for better UI
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black, width: 2),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                            Icons.cloud_upload, size: 50, color: Colors.pink),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Please select your CSV file here:",
+                          style: TextStyle(fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: loadCSV,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text("Upload CSV"),
+                        ),
+                        if (packages.isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Text(
+                            "Loaded ${packages.length} packages.",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: goToResultsScreen,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text("View Results"),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

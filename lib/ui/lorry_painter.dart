@@ -39,6 +39,7 @@ class LorryPainter extends CustomPainter {
       Package package = lorry.packages[i];
       int startLayer = package.assignedLayer;
       int endLayer = startLayer + (package.height / 56).ceil() - 1;
+      
       if (selectedLayer >= startLayer && selectedLayer <= endLayer) {
         Offset pos = lorry.packagePositions[i];
 
