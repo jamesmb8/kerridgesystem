@@ -157,7 +157,7 @@ class TutorialPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
 
-                          // Thank You Message
+
                           const Text(
                             "Thank you for using our system!",
                             style: TextStyle(

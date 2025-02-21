@@ -14,14 +14,14 @@ class LorryPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double lorryWidth = lorry.width * 100 * scale; // Lorry width in cm
-    double lorryLength = lorry.length * 100 * scale; // Lorry length in cm
+    double lorryWidth = lorry.width * 100 * scale;
+    double lorryLength = lorry.length * 100 * scale;
 
-    // Center lorry in canvas
+
     double lorryX = (size.width - lorryLength) / 2;
     double lorryY = (size.height - lorryWidth) / 2;
 
-    // Draw lorry border
+
     Paint lorryBorderPaint = Paint()
       ..color = Colors.black
       ..strokeWidth = 4
@@ -39,7 +39,7 @@ class LorryPainter extends CustomPainter {
       Package package = lorry.packages[i];
       int startLayer = package.assignedLayer;
       int endLayer = startLayer + (package.height / 56).ceil() - 1;
-      
+
       if (selectedLayer >= startLayer && selectedLayer <= endLayer) {
         Offset pos = lorry.packagePositions[i];
 

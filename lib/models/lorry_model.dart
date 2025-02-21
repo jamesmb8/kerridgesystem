@@ -10,7 +10,7 @@ class Lorry {
   final List<Package> packages;
   List<Offset> packagePositions = [];
 
-  static const double padding = 2.0; // Small padding between packages
+  static const double padding = 2.0;
 
   Lorry({
     required this.ID,
@@ -33,7 +33,7 @@ class Lorry {
 
     debugPrint("Lorry Size: ${length * 100}cm x ${width * 100}cm (Scaled: $maxWidth x $maxHeight)");
 
-    // Sort packages by height * width (largest first)
+
     packages.sort((a, b) {
       int weightCompare = b.weight.compareTo(a.weight);
       return weightCompare != 0 ? weightCompare : (b.length * b.width).compareTo(a.length * a.width);
@@ -100,14 +100,14 @@ class Lorry {
 
       debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy}) at height: $bestBaseHeight");
 
-      // Remove overlapping spaces
+
       availableSpaces.removeWhere((space) => placedPackages.any((p) => Rect.fromLTWH(p["x"], p["y"], p["width"], p["height"]).contains(space)));
 
-      // Add new valid positions (left to right filling)
-      availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy)); // Right side
-      availableSpaces.add(Offset(bestPosition.dx, bestPosition.dy + packageHeight)); // Bottom side
 
-      // Sort spaces to prioritize filling from left to right
+      availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy));
+      availableSpaces.add(Offset(bestPosition.dx, bestPosition.dy + packageHeight));
+
+
       availableSpaces.sort((a, b) => (a.dx == b.dx) ? a.dy.compareTo(b.dy) : a.dx.compareTo(b.dx));
     }
 

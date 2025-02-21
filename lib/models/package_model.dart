@@ -23,7 +23,7 @@ class Package {
     this.assignedLayer = 1,
   });
 
-  // Factory constructor to create a Package from CSV row
+
   factory Package.fromCSV(List<dynamic> csvRow,
       List<Package> allPackages ) {
 
@@ -47,21 +47,21 @@ class Package {
 
   static int determineLayer(double packageHeight, double packageWeight,
       List<Package> allPackages) {
-    // Constants based on lorry constraints
-    const double maxLorryHeight = 280.0; // Maximum lorry height
-    const double layerHeight = maxLorryHeight / 3; // Approx. 93.3 cm per layer
 
-    // Step 1: Sort all packages by weight (heaviest first)
+    const double maxLorryHeight = 280.0;
+    const double layerHeight = maxLorryHeight / 3;
+
+
     allPackages.sort((a, b) => b.weight.compareTo(a.weight));
 
 
-    // Step 2: Determine the best layer for the given package
+
     if (packageHeight > layerHeight * 2) {
-      return 1; // Items taller than 186cm must be in Layer 1
+      return 1;
     } else if (packageWeight >= 5.0) {
-      return 1; // Items between 93cm and 186cm go to Layer 2
+      return 1;
     } else if (packageHeight > layerHeight) {
-      return 2; // Smallest items go to Layer 3
+      return 2;
     } else {
       return 3;
     }
