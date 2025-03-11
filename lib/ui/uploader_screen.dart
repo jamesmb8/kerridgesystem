@@ -7,6 +7,8 @@ import '../models/lorry_model.dart';
 import 'results_screen.dart';
 
 class UploaderScreen extends StatefulWidget {
+  const UploaderScreen({super.key});
+
   @override
   _UploaderScreenState createState() => _UploaderScreenState();
 }

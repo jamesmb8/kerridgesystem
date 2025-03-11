@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'ui/welcome_screen.dart';
-import 'ui/uploader_screen.dart';
 
 
 void main() {

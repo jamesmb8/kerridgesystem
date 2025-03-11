@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart';
-import 'uploader_screen.dart';
 
 class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
-import '../ui/uploader_screen.dart';
 import '../models/package_model.dart';
 
 class FileLoader {

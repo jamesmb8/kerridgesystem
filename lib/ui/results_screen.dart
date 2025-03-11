@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/lorry_model.dart';
 import '../models/package_model.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/painting.dart';
 import 'lorry_painter.dart';
 import 'layer_buttons.dart';
 
 class ResultsScreen extends StatefulWidget {
   final Lorry lorry;
 
-  const ResultsScreen({Key? key, required this.lorry}) : super(key: key);
+  const ResultsScreen({super.key, required this.lorry});
 
   @override
   _ResultsScreenState createState() => _ResultsScreenState();
@@ -34,18 +32,48 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Lorry Results")),
+
       body: Container(
         color: Colors.white,
         child: Column(
 
+          children: [
+            Align(
+              alignment: Alignment.topLeft, // Change to topLeft, bottomCenter, etc.
+              child: Padding(
+                padding: EdgeInsets.only(left: 20.0),
+                child:
+                Text('Front',
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue
+                  ),
+                ),
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child:
+                Text('Back',
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue
+                  ),
+                ),
+              ),
+            ),
 
 
-        children: [
           // Lorry visualization
           Expanded(
             flex: 3,
             child: Center(
-              child: Container(
+              child: SizedBox(
                 width: screenWidth,
                 height: screenHeight * 0.4, // Adjust height for lorry visualization
                 child: CustomPaint(
@@ -61,6 +89,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
           ),
           const Divider(),
           const SizedBox(height: 15),
+
 
           LayerButtons(selectedLayer: _selectedLayer,
 

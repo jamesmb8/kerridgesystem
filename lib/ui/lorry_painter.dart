@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import '../models/package_model.dart';
 import '../models/lorry_model.dart';
-import 'uploader_screen.dart';
-import '../data/file_loader.dart';
 
 class LorryPainter extends CustomPainter {
   final Lorry lorry;
@@ -20,6 +17,7 @@ class LorryPainter extends CustomPainter {
 
     double lorryX = (size.width - lorryLength) / 2;
     double lorryY = (size.height - lorryWidth) / 2;
+
 
 
     Paint lorryBorderPaint = Paint()
@@ -68,6 +66,7 @@ class LorryPainter extends CustomPainter {
         );
       }
     }
+
   }
 
     @override

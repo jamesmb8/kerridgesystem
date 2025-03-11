@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import '../models/lorry_model.dart';
-import '../models/package_model.dart';
 
 class LayerButtons extends StatelessWidget {
   final int selectedLayer;
   final Function(int) onLayerChanged;
 
   const LayerButtons({
-    Key? key,
+    super.key,
     required this.selectedLayer,
     required this.onLayerChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
