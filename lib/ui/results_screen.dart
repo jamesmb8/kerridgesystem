@@ -16,12 +16,21 @@ class ResultsScreen extends StatefulWidget {
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
-  int _selectedLayer = 1; // Default to the first layer
+  int _selectedLayer = 1;
+  int? _selectedLorrie;// Default to the first layer
+
+  List<int> Lorries = [1, 2, 3, 4, 5];
 
   void _changeLayer(int layerIndex) {
     setState(() {
       _selectedLayer = layerIndex;
     });
+  }
+
+    void _changeLorry(int? newLorry) {
+      setState(() {
+        _selectedLorrie = newLorry;
+      });
   }
 
   @override
@@ -33,14 +42,20 @@ class _ResultsScreenState extends State<ResultsScreen> {
     widget.lorry.calculatePackagePositions(scale);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Lorry Results")),
+      appBar: AppBar(title: Text("Lorry Results"),
+      backgroundColor:  Colors.white,
+    ),
       body: Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.pink.shade200],
+        ),
+      ),
+
         child: Column(
-
-
-
-        children: [
+          children: [
           // Lorry visualization
           Expanded(
             flex: 3,
@@ -68,11 +83,44 @@ class _ResultsScreenState extends State<ResultsScreen> {
           ),
           SizedBox(height: 15),
 
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: DropdownButton(
+            value: _selectedLorrie,
+            hint: Text("Select a Lorrie", style: TextStyle(color: Colors.pink.shade300)),
+            items: Lorries.map((int lorry) {
+              return DropdownMenuItem<int>(
+                value: lorry,
+                child: Text("Lorry $lorry"),
+              );
+            }).toList(),
+            onChanged: _changeLorry,
+            isExpanded: true,
+            elevation: 16,
+            style: TextStyle(color: Colors.black),
+            underline: Container(
+              height: 2,
+              color: Colors.blueAccent,
+            ),
+          ),
+          ),
 
+        Padding(padding: const EdgeInsets.all(16.0),
+          child: Text(
+              "Packages in Lorry",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.pink.shade300,
+            ),
+
+          ),
+
+        ),
 
 
           // Package list below the lorry visualization
-          Text("Packages in Lorry", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
           Expanded(
             flex: 2,
             child: widget.lorry.packages.isEmpty
@@ -81,12 +129,20 @@ class _ResultsScreenState extends State<ResultsScreen> {
               itemCount: widget.lorry.packages.length,
               itemBuilder: (context, index) {
                 Package package = widget.lorry.packages[index];
-                return ListTile(
-                  title: Text("Package ${package.countId}: ${package.type}"),
-                  subtitle: Text(
-                    "Size: ${package.length} x ${package.width} x ${package.height}, Weight: ${package.weight}",
+                return Card(
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                    child:  ListTile(
+                title: Text("Package ${package.countId}: ${package.type}"),
+                subtitle: Text(
+                "Size: ${package.length} x ${package.width} x ${package.height}, Weight: ${package.weight}",
+                ),
+                ),
                 );
+
               },
             ),
           ),
