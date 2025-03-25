@@ -5,6 +5,7 @@ import 'package:csv/csv.dart';
 import '../models/package_model.dart';
 import '../models/lorry_model.dart';
 import 'results_screen.dart';
+import '../models/lorry_manager.dart';
 
 class UploaderScreen extends StatefulWidget {
   @override
@@ -79,28 +80,21 @@ class _UploaderScreenState extends State<UploaderScreen> {
 
   void goToResultsScreen() {
     if (packages.isEmpty) {
-      print("Cannot proceed, no packages loaded.");
+
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text("No packages loaded! Please upload a valid CSV."))
       );
       return;
     }
+    final manager = LorryManager(packages);
 
-    Lorry loadedLorry = Lorry(
-      ID: 1,
-      length: 14.0,
-      width: 2.8,
-      doorheight: 2.8,
-      maxweight: 10000,
-      packages: packages,
-    );
 
     print("Navigating to ResultsScreen with ${packages.length} packages.");
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ResultsScreen(lorry: loadedLorry)),
+          builder: (context) => ResultsScreen(lorries: manager.lorries)),
     );
   }
 
