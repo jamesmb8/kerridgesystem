@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/lorry_model.dart';
-import '../data/pdf_generator.dart';
+import '../data/pdf_generator_wrapper.dart';
+
+
+
 
 class PDFButton extends StatelessWidget {
   final List<Lorry> lorries;

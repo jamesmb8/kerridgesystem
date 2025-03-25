@@ -7,7 +7,8 @@ import '../models/package_model.dart';
 import 'layer_buttons.dart';
 import 'lorry_painter.dart';
 import 'pdf_button.dart';
-import '../data/pdf_generator.dart';
+import '../data/pdf_generator_wrapper.dart';
+
 import 'dart:typed_data';
 
 class ResultsScreen extends StatefulWidget {
