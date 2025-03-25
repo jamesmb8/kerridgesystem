@@ -26,11 +26,10 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS App
-        run: flutter build macos
+        run: flutter build macos --release
 
-      - name: Upload .app to Release
-        uses: softprops/action-gh-release@v1
+      - name: Upload macOS App Artifact
+        uses: actions/upload-artifact@v3
         with:
-          files: build/macos/Build/Products/Release/*.app/**/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: macos-kerridgesystem
+          path: build/macos/Build/Products/Release/
