@@ -62,7 +62,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        toolbarHeight: 0, // Hides built-in app bar visuals
+        toolbarHeight: 0,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -81,38 +81,35 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset("assets/images/logoKerridge.png", height: 80),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.download, color: Colors.pinkAccent),
-                    onPressed: () async {
-                      await generateAndDownloadPdf(widget.lorries);
-                    },
-                  ),
-                  const SizedBox(width:10),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF189281),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                  Row(
+                    children: [
+                      PDFButton(
+                        lorries: widget.lorries,
+                        color: Colors.pinkAccent,
+                        iconOnly: true,
                       ),
-                      elevation: 5,
-                    ),
-                    child: const Text(
-                      "Back",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF189281),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: const Text(
+                          "Back",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ],
                   ),
-            ],
+                ],
               ),
             ),
-
-
 
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
