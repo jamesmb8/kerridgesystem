@@ -4,11 +4,11 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../models/lorry_model.dart';
 
-Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries) async {
+Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale) async {
   final pdf = pw.Document();
 
-  const double canvasWidth = 400; // arbitrary scale
-  const double canvasHeight = 100; // adjust as needed
+  const double canvasWidth = 800; // arbitrary scale
+  const double canvasHeight = 113; // adjust as needed
 
   for (final lorry in lorries) {
     lorry.calculatePackagePositions(1.0); // Scale 1.0 for simplicity

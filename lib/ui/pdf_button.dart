@@ -6,17 +6,19 @@ class PDFButton extends StatelessWidget {
   final List<Lorry> lorries;
   final bool iconOnly;
   final Color? color;
+  final double scale;
 
   const PDFButton({
     Key? key,
     required this.lorries,
+    required this.scale,
     this.iconOnly = false,
     this.color,
   }) : super(key: key);
 
   Future<void> _generate(BuildContext context) async {
     try {
-      await generateAndDownloadPdfFromLorries(lorries);
+      await generateAndDownloadPdfFromLorries(lorries, scale);
     } catch (e) {
       print("❌ PDF error: $e");
       ScaffoldMessenger.of(context)

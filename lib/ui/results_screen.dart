@@ -85,6 +85,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     children: [
                       PDFButton(
                         lorries: widget.lorries,
+                        scale: scale,
                         color: Colors.pinkAccent,
                         iconOnly: true,
                       ),
