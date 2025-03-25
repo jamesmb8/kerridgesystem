@@ -1,8 +1,14 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../models/lorry_model.dart';
 import '../models/package_model.dart';
 import 'layer_buttons.dart';
 import 'lorry_painter.dart';
+import 'pdf_button.dart';
+import '../data/pdf_generator.dart';
+import 'dart:typed_data';
 
 class ResultsScreen extends StatefulWidget {
   final List<Lorry> lorries;
@@ -75,6 +81,15 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Image.asset("assets/images/logoKerridge.png", height: 80),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.download, color: Colors.pinkAccent),
+                    onPressed: () async {
+                      await generateAndDownloadPdf(widget.lorries);
+                    },
+                  ),
+                  const SizedBox(width:10),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
@@ -91,9 +106,13 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ],
+                    ],
+                  ),
+            ],
               ),
             ),
+
+
 
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
