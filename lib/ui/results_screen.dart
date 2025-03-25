@@ -74,7 +74,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
         ),
         child: Column(
           children: [
-            // Logo + Back Button Row
+            // Header: Logo + PDF + Back
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
@@ -119,17 +119,46 @@ class _ResultsScreenState extends State<ResultsScreen> {
               ),
             ),
 
+            // Lorry visual with Front/Back labels
             Expanded(
               flex: 3,
-              child: Center(
-                child: CustomPaint(
-                  painter: LorryPainter(
-                    lorry: currentLorry,
-                    scale: scale,
-                    selectedLayer: _selectedLayer,
-                    highlightedPackageId: _highlightedPackageId,
+              child: Stack(
+                children: [
+                  Center(
+                    child: CustomPaint(
+                      painter: LorryPainter(
+                        lorry: currentLorry,
+                        scale: scale,
+                        selectedLayer: _selectedLayer,
+                        highlightedPackageId: _highlightedPackageId,
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 0,
+                    left: 20,
+                    child: Text(
+                      "Front",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 20,
+                    child: Text(
+                      "Back",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
