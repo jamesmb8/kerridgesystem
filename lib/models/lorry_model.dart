@@ -31,36 +31,47 @@ class Lorry {
     debugPrint("Running calculatePackagePositions...");
     packagePositions.clear();
 
+    const totalLayers = 5;
     final maxWidth = length * 100;
     final maxDepth = width * 100;
 
-    packages.sort((a, b) => b.weight.compareTo(a.weight));
+    final List<List<Rect>> layerRects = List.generate(totalLayers, (_) => []);
+    final List<List<double>> layerWeights = List.generate(totalLayers, (_) => []);
 
-    List<List<Rect>> layerRects = List.generate(5, (_) => []);
+    packages.sort((a, b) {
+      final aMetric = a.length * a.width * a.height;
+      final bMetric = b.length * b.width * b.height;
+      return bMetric.compareTo(aMetric); // largest volume first
+    });
 
-    for (var pkg in packages) {
-      double w = pkg.width + padding;
-      double d = pkg.length + padding;
-      double h = pkg.height;
+    for (final pkg in packages) {
+      final w = pkg.width + padding;
+      final d = pkg.length + padding;
+      final h = pkg.height;
+      final vol = w * d * h;
 
-      debugPrint("Trying to place package ID=${pkg.countId}, Size=(${w}x${d}x${h})");
-
-      int requiredLayers = (h / layerHeight).ceil();
-
+      final layersRequired = (h / layerHeight).ceil();
       bool placed = false;
 
-      for (int layer = 0; layer <= 5 - requiredLayers; layer++) {
+      for (int layer = 0; layer <= totalLayers - layersRequired; layer++) {
+        final avgBelowWeight = layer == 0
+            ? double.infinity
+            : layerWeights.sublist(0, layer).expand((e) => e).fold(0.0, (a, b) => a + b) /
+            layerWeights.sublist(0, layer).expand((e) => e).length;
+
+        if (pkg.weight > avgBelowWeight) continue;
+
         for (double x = 0; x <= maxWidth - w; x += 5) {
           for (double y = 0; y <= maxDepth - d; y += 5) {
             final candidate = Rect.fromLTWH(x, y, w, d);
+            final overlaps = layerRects
+                .sublist(layer, layer + layersRequired)
+                .any((rects) => rects.any((r) => r.overlaps(candidate)));
 
-            final overlap = layerRects
-                .sublist(layer, layer + requiredLayers)
-                .any((layerList) => layerList.any((r) => r.overlaps(candidate)));
-
-            if (!overlap) {
-              for (int l = layer; l < layer + requiredLayers; l++) {
+            if (!overlaps) {
+              for (int l = layer; l < layer + layersRequired; l++) {
                 layerRects[l].add(candidate);
+                layerWeights[l].add(pkg.weight);
               }
 
               pkg.assignedLayer = layer + 1;
@@ -75,7 +86,7 @@ class Lorry {
                 "countId": pkg.countId,
               });
 
-              debugPrint("Placed package ID=${pkg.countId} at ($x, $y) on layer ${layer + 1}");
+              debugPrint("✅ Placed package ID=${pkg.countId} on layer ${layer + 1}");
               placed = true;
               break;
             }
@@ -92,4 +103,5 @@ class Lorry {
 
     debugPrint("✅ Finished placement: ${packagePositions.length} packages placed");
   }
+
 }

@@ -6,8 +6,6 @@ import 'uploader_screen.dart';
 import '../data/file_loader.dart';
 
 
-import 'package:flutter/material.dart';
-import '../models/lorry_model.dart';
 
 class LorryPainter extends CustomPainter {
   final Lorry lorry;
@@ -31,11 +29,15 @@ class LorryPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(lorryX, lorryY, lorryLength, lorryWidth), borderPaint);
 
     final layerColors = [Colors.yellow, Colors.green, Colors.blue, Colors.red, Colors.purple];
+    const double layerHeight = Lorry.maxLorryHeight / 5;
 
     for (final pkg in lorry.packagePositions) {
-      if (pkg["layer"] != selectedLayer) continue;
+      final startLayer = pkg["layer"];
+      final layerSpan = (pkg["height"] / layerHeight).ceil();
 
-      final color = layerColors[(pkg["layer"] - 1) % layerColors.length];
+      if (selectedLayer < startLayer || selectedLayer >= startLayer + layerSpan) continue;
+
+      final color = layerColors[(startLayer - 1) % layerColors.length];
       final fillPaint = Paint()..color = color;
 
       final x = lorryX + pkg["x"] * scale;
