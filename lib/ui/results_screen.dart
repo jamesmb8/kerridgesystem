@@ -3,10 +3,6 @@ import '../models/lorry_model.dart';
 import '../models/package_model.dart';
 import 'layer_buttons.dart';
 import 'lorry_painter.dart';
-import '../models/lorry_manager.dart';
-
-
-
 
 class ResultsScreen extends StatefulWidget {
   final List<Lorry> lorries;
@@ -20,6 +16,7 @@ class ResultsScreen extends StatefulWidget {
 class _ResultsScreenState extends State<ResultsScreen> {
   int _selectedLayer = 1;
   int _selectedLorryIndex = 0;
+  int? _highlightedPackageId;
   double scale = 1.0;
 
   @override
@@ -57,8 +54,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lorry Results"),
         backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 0, // Hides built-in app bar visuals
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -70,33 +68,67 @@ class _ResultsScreenState extends State<ResultsScreen> {
         ),
         child: Column(
           children: [
+            // Logo + Back Button Row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset("assets/images/logoKerridge.png", height: 80),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF189281),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      "Back",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                "Lorry Visualisation & Package Layout",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.pink.shade300),
+              ),
+            ),
+
             Expanded(
               flex: 3,
               child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: CustomPaint(
-                    painter: LorryPainter(
-                      lorry: currentLorry,
-                      scale: scale,
-                      selectedLayer: _selectedLayer,
-                    ),
+                child: CustomPaint(
+                  painter: LorryPainter(
+                    lorry: currentLorry,
+                    scale: scale,
+                    selectedLayer: _selectedLayer,
+                    highlightedPackageId: _highlightedPackageId,
                   ),
                 ),
               ),
             ),
-            const Divider(),
-            const SizedBox(height: 10),
 
-            LayerButtons(
-              selectedLayer: _selectedLayer,
-              onLayerChanged: _changeLayer,
+            const Divider(),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: LayerButtons(
+                selectedLayer: _selectedLayer,
+                onLayerChanged: _changeLayer,
+              ),
             ),
 
-            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
               child: DropdownButton<int>(
                 value: _selectedLorryIndex,
                 hint: Text("Select a Lorry", style: TextStyle(color: Colors.pink.shade300)),
@@ -115,14 +147,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Packages in Lorry ${currentLorry.ID}",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.pink.shade300,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink.shade300),
               ),
             ),
 
@@ -146,6 +174,12 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         "Size: ${package.length} x ${package.width} x ${package.height}, "
                             "Weight: ${package.weight}, Layer: ${package.assignedLayer}",
                       ),
+                      onTap: () {
+                        setState(() {
+                          _highlightedPackageId = package.countId;
+                          _selectedLayer = package.assignedLayer;
+                        });
+                      },
                     ),
                   );
                 },

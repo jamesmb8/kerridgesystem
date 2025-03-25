@@ -11,8 +11,10 @@ class LorryPainter extends CustomPainter {
   final Lorry lorry;
   final double scale;
   final int selectedLayer;
+  final int? highlightedPackageId;
 
-  LorryPainter({required this.lorry, required this.scale, required this.selectedLayer});
+
+  LorryPainter({required this.lorry, required this.scale, required this.selectedLayer, this.highlightedPackageId});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -46,6 +48,14 @@ class LorryPainter extends CustomPainter {
       final d = pkg["depth"] * scale;
 
       canvas.drawRect(Rect.fromLTWH(x, y, w, d), fillPaint);
+      if (highlightedPackageId != null && pkg["countId"] == highlightedPackageId) {
+        final highlightPaint = Paint()
+          ..color = Colors.black
+          ..strokeWidth = 3
+          ..style = PaintingStyle.stroke;
+
+        canvas.drawRect(Rect.fromLTWH(x, y, w, d), highlightPaint);
+      }
 
       final textPainter = TextPainter(
         text: TextSpan(
