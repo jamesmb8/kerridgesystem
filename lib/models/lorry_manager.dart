@@ -23,6 +23,6 @@ class LorryManager {
         currentWeight = pkg.weight;
       }
     }
-    lorries.add(currentLorry); // Add last lorry
+    lorries.add(currentLorry);
   }
 }

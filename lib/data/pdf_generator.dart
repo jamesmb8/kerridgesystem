@@ -7,14 +7,15 @@ import '../models/lorry_model.dart';
 Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale) async {
   final pdf = pw.Document();
 
-  const double canvasWidth = 800; // arbitrary scale
-  const double canvasHeight = 113; // adjust as needed
+  const double canvasWidth = 565;
+  const double canvasHeight = 113;
 
   for (final lorry in lorries) {
-    lorry.calculatePackagePositions(1.0); // Scale 1.0 for simplicity
+    lorry.calculatePackagePositions(1.0);
 
     pdf.addPage(
       pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.landscape,
         build: (context) {
           return [
             pw.Text("Lorry ${lorry.ID}",

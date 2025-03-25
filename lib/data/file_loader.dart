@@ -22,7 +22,7 @@ class FileLoader {
       for (int i = 1; i < csvTable.length; i++) {
         List<dynamic> row = csvTable[i];
 
-        // Check if the row has the expected number of columns
+
 
         Package package = Package(
           countId: int.tryParse(row[0].toString()) ?? 0,

@@ -41,7 +41,7 @@ class Lorry {
     packages.sort((a, b) {
       final aMetric = a.length * a.width * a.height;
       final bMetric = b.length * b.width * b.height;
-      return bMetric.compareTo(aMetric); // largest volume first
+      return bMetric.compareTo(aMetric);
     });
 
     for (final pkg in packages) {
