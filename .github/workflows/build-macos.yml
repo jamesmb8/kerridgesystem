@@ -1,0 +1,36 @@
+name: Build macOS App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build macOS App
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+
+      - name: Enable macOS Desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build macOS App
+        run: flutter build macos
+
+      - name: Upload .app to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/macos/Build/Products/Release/*.app/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
