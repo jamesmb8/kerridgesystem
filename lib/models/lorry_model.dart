@@ -1,5 +1,8 @@
 import 'package_model.dart';
 import 'package:flutter/material.dart';
+import '../ui/lorry_painter.dart';
+
+
 
 class Lorry {
   final int ID;
@@ -8,9 +11,12 @@ class Lorry {
   final double doorheight;
   final int maxweight;
   final List<Package> packages;
-  List<Offset> packagePositions = [];
+
+  List<Map<String, dynamic>> packagePositions = [];
 
   static const double padding = 2.0;
+  static const double maxLorryHeight = 280.0;
+  static const double layerHeight = maxLorryHeight / 5;
 
   Lorry({
     required this.ID,
@@ -19,98 +25,71 @@ class Lorry {
     this.doorheight = 2.8,
     this.maxweight = 10000,
     required this.packages,
-  }) {
-    packagePositions = [];
-    calculatePackagePositions(1.0);
-  }
+  });
 
   void calculatePackagePositions(double scale) {
+    debugPrint("Running calculatePackagePositions...");
     packagePositions.clear();
 
-    double maxWidth = length * 100 * scale;
-    double maxHeight = width * 100 * scale;
-    double maxLorryHeight = 280.0;
+    final maxWidth = length * 100;
+    final maxDepth = width * 100;
 
-    debugPrint("Lorry Size: ${length * 100}cm x ${width * 100}cm (Scaled: $maxWidth x $maxHeight)");
+    packages.sort((a, b) => b.weight.compareTo(a.weight));
 
+    List<List<Rect>> layerRects = List.generate(5, (_) => []);
 
-    packages.sort((a, b) {
-      int weightCompare = b.weight.compareTo(a.weight);
-      return weightCompare != 0 ? weightCompare : (b.length * b.width).compareTo(a.length * a.width);
-    });
+    for (var pkg in packages) {
+      double w = pkg.width + padding;
+      double d = pkg.length + padding;
+      double h = pkg.height;
 
-    List<Map<String, dynamic>> placedPackages = [];
-    List<Offset> availableSpaces = [Offset(0, 0)];
+      debugPrint("Trying to place package ID=${pkg.countId}, Size=(${w}x${d}x${h})");
 
-    for (var package in packages) {
-      double packageWidth = (package.width * scale) + padding;
-      double packageHeight = (package.length * scale) + padding;
-      double packageTotalHeight = package.height;
+      int requiredLayers = (h / layerHeight).ceil();
 
-      debugPrint("Package Size: ${package.width}cm x ${package.length}cm Height: ${package.height}cm");
+      bool placed = false;
 
-      Offset? bestPosition;
-      double minWastedSpace = double.infinity;
-      double bestBaseHeight = 0;
+      for (int layer = 0; layer <= 5 - requiredLayers; layer++) {
+        for (double x = 0; x <= maxWidth - w; x += 5) {
+          for (double y = 0; y <= maxDepth - d; y += 5) {
+            final candidate = Rect.fromLTWH(x, y, w, d);
 
-      for (var space in availableSpaces) {
-        double baseHeight = 0;
+            final overlap = layerRects
+                .sublist(layer, layer + requiredLayers)
+                .any((layerList) => layerList.any((r) => r.overlaps(candidate)));
 
-        for (var placed in placedPackages) {
-          Rect placedRect = Rect.fromLTWH(placed["x"], placed["y"], placed["width"], placed["height"]);
-          Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
+            if (!overlap) {
+              for (int l = layer; l < layer + requiredLayers; l++) {
+                layerRects[l].add(candidate);
+              }
 
-          if (placedRect.overlaps(newPackage) && package.weight <= placed["weight"]) {
-            baseHeight = placed["baseHeight"] + placed["packageHeight"];
+              pkg.assignedLayer = layer + 1;
+
+              packagePositions.add({
+                "x": x,
+                "y": y,
+                "width": w,
+                "depth": d,
+                "height": h,
+                "layer": layer + 1,
+                "countId": pkg.countId,
+              });
+
+              debugPrint("Placed package ID=${pkg.countId} at ($x, $y) on layer ${layer + 1}");
+              placed = true;
+              break;
+            }
           }
+          if (placed) break;
         }
-        if (baseHeight + packageTotalHeight > maxLorryHeight) continue;
-
-        Rect newPackage = Rect.fromLTWH(space.dx, space.dy, packageWidth, packageHeight);
-        bool overlaps = placedPackages.any((p) => Rect.fromLTWH(p["x"], p["y"], p["width"], p["height"]).overlaps(newPackage));
-        if (overlaps) continue;
-
-        if (space.dx + packageWidth <= maxWidth && space.dy + packageHeight <= maxHeight) {
-          double wastedSpace = (maxWidth - (space.dx + packageWidth)) + (maxHeight - (space.dy + packageHeight));
-
-          if (wastedSpace < minWastedSpace) {
-            bestPosition = space;
-            minWastedSpace = wastedSpace;
-            bestBaseHeight = baseHeight;
-          }
-        }
+        if (placed) break;
       }
 
-      if (bestPosition == null) {
-        debugPrint("No available space found for package.");
-        break;
+      if (!placed) {
+        debugPrint("⚠️ Could not place package ID=${pkg.countId}");
       }
-
-      packagePositions.add(Offset(bestPosition.dx, bestPosition.dy));
-      placedPackages.add({
-        "x": bestPosition.dx,
-        "y": bestPosition.dy,
-        "width": packageWidth,
-        "height": packageHeight,
-        "packageHeight": packageTotalHeight,
-        "baseHeight": bestBaseHeight,
-        "weight": package.weight
-      });
-
-
-      debugPrint("Placed at: (${bestPosition.dx}, ${bestPosition.dy}) at height: $bestBaseHeight");
-
-
-      availableSpaces.removeWhere((space) => placedPackages.any((p) => Rect.fromLTWH(p["x"], p["y"], p["width"], p["height"]).contains(space)));
-
-
-      availableSpaces.add(Offset(bestPosition.dx + packageWidth, bestPosition.dy));
-      availableSpaces.add(Offset(bestPosition.dx, bestPosition.dy + packageHeight));
-
-
-      availableSpaces.sort((a, b) => (a.dx == b.dx) ? a.dy.compareTo(b.dy) : a.dx.compareTo(b.dx));
     }
 
-    debugPrint("Final Package Positions: $packagePositions");
+    debugPrint("✅ Finished placement: ${packagePositions.length} packages placed");
   }
 }

@@ -5,6 +5,10 @@ import '../models/lorry_model.dart';
 import 'uploader_screen.dart';
 import '../data/file_loader.dart';
 
+
+import 'package:flutter/material.dart';
+import '../models/lorry_model.dart';
+
 class LorryPainter extends CustomPainter {
   final Lorry lorry;
   final double scale;
@@ -16,64 +20,50 @@ class LorryPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double lorryWidth = lorry.width * 100 * scale;
     double lorryLength = lorry.length * 100 * scale;
-
-
     double lorryX = (size.width - lorryLength) / 2;
     double lorryY = (size.height - lorryWidth) / 2;
 
-
-    Paint lorryBorderPaint = Paint()
+    final borderPaint = Paint()
       ..color = Colors.black
-      ..strokeWidth = 4
+      ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-    Rect lorryRect = Rect.fromLTWH(lorryX, lorryY, lorryLength, lorryWidth);
-    canvas.drawRect(lorryRect, lorryBorderPaint);
+    canvas.drawRect(Rect.fromLTWH(lorryX, lorryY, lorryLength, lorryWidth), borderPaint);
 
-    // Draw packages using precomputed positions
-    Paint packagePaint = Paint()
-      ..color = Colors.yellow
-      ..style = PaintingStyle.fill;
+    final layerColors = [Colors.yellow, Colors.green, Colors.blue, Colors.red, Colors.purple];
 
-    for (int i = 0; i < lorry.packagePositions.length; i++) {
-      Package package = lorry.packages[i];
-      int startLayer = package.assignedLayer;
-      int endLayer = startLayer + (package.height / 56).ceil() - 1;
+    for (final pkg in lorry.packagePositions) {
+      if (pkg["layer"] != selectedLayer) continue;
 
-      if (selectedLayer >= startLayer && selectedLayer <= endLayer) {
-        Offset pos = lorry.packagePositions[i];
+      final color = layerColors[(pkg["layer"] - 1) % layerColors.length];
+      final fillPaint = Paint()..color = color;
 
-        double packageWidth = package.width * scale; // Package width in cm
-        double packageHeight = package.length * scale; // Package height in cm
+      final x = lorryX + pkg["x"] * scale;
+      final y = lorryY + pkg["y"] * scale;
+      final w = pkg["width"] * scale;
+      final d = pkg["depth"] * scale;
 
-        Rect packageRect = Rect.fromLTWH(
-            lorryX + pos.dx, lorryY + pos.dy, packageWidth, packageHeight);
-        canvas.drawRect(packageRect, packagePaint);
+      canvas.drawRect(Rect.fromLTWH(x, y, w, d), fillPaint);
 
-        // Draw package ID
-        TextPainter textPainter = TextPainter(
-          text: TextSpan(
-            text: '${package.countId}',
-            style: TextStyle(color: Colors.black, fontSize: 14),
-          ),
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr,
-        )
-          ..layout(minWidth: 0, maxWidth: packageWidth);
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: '${pkg["countId"]}',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: w);
 
-        textPainter.paint(
-          canvas,
-          Offset(lorryX + pos.dx + (packageWidth - textPainter.width) / 2,
-              lorryY + pos.dy + (packageHeight - textPainter.height) / 2),
-        );
-      }
+      textPainter.paint(
+        canvas,
+        Offset(x + (w - textPainter.width) / 2, y + (d - textPainter.height) / 2),
+      );
     }
   }
 
-    @override
-    bool shouldRepaint(covariant LorryPainter oldDelegate) {
-      return oldDelegate.selectedLayer != selectedLayer ||
-          oldDelegate.scale != scale ||
-          oldDelegate.lorry != lorry;
-    }
+  @override
+  bool shouldRepaint(covariant LorryPainter oldDelegate) {
+    return oldDelegate.selectedLayer != selectedLayer ||
+        oldDelegate.lorry != lorry ||
+        oldDelegate.scale != scale;
   }
+}

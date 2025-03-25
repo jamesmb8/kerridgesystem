@@ -21,7 +21,11 @@ class LayerButtons extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: ElevatedButton(
-            onPressed: () => onLayerChanged(layerNumber),
+            onPressed: () {
+
+              debugPrint("Button pressed: Layer $layerNumber");
+              onLayerChanged(layerNumber);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: selectedLayer == layerNumber ? Colors.blue : Colors.grey,
             ),

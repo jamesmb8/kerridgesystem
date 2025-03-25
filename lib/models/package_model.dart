@@ -8,6 +8,7 @@ class Package {
   final double weight;
   final double radius;
   final double width;
+
   int assignedLayer;
 
   Package({
@@ -23,10 +24,7 @@ class Package {
     this.assignedLayer = 1,
   });
 
-
-  factory Package.fromCSV(List<dynamic> csvRow,
-      List<Package> allPackages ) {
-
+  factory Package.fromCSV(List<dynamic> csvRow, List<Package> allPackages) {
     return Package(
       countId: int.tryParse(csvRow[0].toString()) ?? 0,
       height: double.tryParse(csvRow[1].toString()) ?? 0.0,
@@ -38,32 +36,52 @@ class Package {
       radius: double.tryParse(csvRow[7].toString()) ?? 0.0,
       width: double.tryParse(csvRow[8].toString()) ?? 0.0,
       assignedLayer: determineLayer(
-          double.tryParse(csvRow[1].toString()) ?? 0.0,
-          double.tryParse(csvRow[6].toString()) ?? 0.0,
-          allPackages
+        double.tryParse(csvRow[1].toString()) ?? 0.0,
+        double.tryParse(csvRow[6].toString()) ?? 0.0,
+        allPackages,
       ),
     );
   }
 
-  static int determineLayer(double packageHeight, double packageWeight,
-      List<Package> allPackages) {
 
+
+  static int determineLayer(
+      double packageHeight,
+      double packageWeight,
+      List<Package> existingPackages,
+      ) {
     const double maxLorryHeight = 280.0;
-    const double layerHeight = maxLorryHeight / 3;
+    const int totalLayers = 5;
+    const double layerHeight = maxLorryHeight / totalLayers;
 
+    List<double> layerHeights = List.filled(totalLayers, 0.0);
 
-    allPackages.sort((a, b) => b.weight.compareTo(a.weight));
+    // Sort the existing packages by weight before assigning layers
+    List<Package> sortedPackages = List.from(existingPackages)
+      ..sort((a, b) => a.weight.compareTo(b.weight));
 
-
-
-    if (packageHeight > layerHeight * 2) {
-      return 1;
-    } else if (packageWeight >= 5.0) {
-      return 1;
-    } else if (packageHeight > layerHeight) {
-      return 2;
-    } else {
-      return 3;
+    for (var package in sortedPackages) {
+      for (int layer = 0; layer < totalLayers; layer++) {
+        if (layerHeights[layer] + package.height <= layerHeight) {
+          package.assignedLayer = layer + 1;
+          layerHeights[layer] += package.height;
+          break;
+        }
+      }
     }
+
+    // Now find where the new package fits
+    for (int layer = 0; layer < totalLayers; layer++) {
+      if (layerHeights[layer] + packageHeight <= layerHeight) {
+        return layer + 1;
+      }
+    }
+
+    return totalLayers; // Default to the top layer
+  }
+
+
+  bool isStackedOnOther() {
+    return assignedLayer > 1; // A package is stacked on another if it's not on the first layer
   }
 }
