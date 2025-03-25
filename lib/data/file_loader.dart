@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import '../ui/uploader_screen.dart';
@@ -12,8 +13,11 @@ class FileLoader {
     );
 
     if (result != null) {
-      final bytes = result.files.single.bytes;
-      final content = utf8.decode(bytes!);
+      final file = result.files.single;
+      final content = file.bytes != null
+          ? utf8.decode(file.bytes!) // ✅ Web
+          : await File(file.path!).readAsString(); // ✅ Desktop
+
       List<List<dynamic>> csvTable = CsvToListConverter().convert(content);
 
       List<Package> packages = [];
