@@ -10,6 +10,7 @@ class FileLoader {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv'],
+      withData: true,
     );
 
     if (result != null) {

@@ -20,6 +20,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['csv'],
+        withData: true,
       );
 
       if (result != null) {
