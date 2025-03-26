@@ -67,4 +67,14 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
   final file = File("${output.path}/lorry_output.pdf");
   await file.writeAsBytes(await pdf.save());
   print("✅ PDF saved to: ${file.path}");
+
+  try {
+    if (Platform.isMacOS) {
+      await Process.run('open', [file.path]);
+    } else if (Platform.isWindows) {
+      await Process.run('start', [file.path], runInShell: true);
+    }
+  } catch (e) {
+    print("❌ Failed to open PDF automatically: $e");
+  }
 }
