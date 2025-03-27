@@ -11,7 +11,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
   const double canvasHeight = 113;
 
   for (final lorry in lorries) {
-    lorry.calculatePackagePositions(1.0);
+
 
     pdf.addPage(
       pw.MultiPage(
@@ -57,7 +57,42 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                 ),
               ),
               pw.SizedBox(height: 20),
+
+              // Checklist Section
+
+
+
+
+
             ],
+            pw.Text("Package Checklist", style: const pw.TextStyle(fontSize: 18)),
+            pw.SizedBox(height: 5),
+            pw.Wrap(
+              spacing: 10,
+              runSpacing: 4,
+              children: [
+                for (final pkg in lorry.packages)
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Container(
+                        width: 10,
+                        height: 10,
+                        decoration: pw.BoxDecoration(
+                          border: pw.Border.all(width: 0.5),
+                        ),
+                      ),
+                      pw.SizedBox(width: 5),
+                      pw.Text(
+                        'Package ${pkg.countId} '
+                            '(${pkg.length}×${pkg.width}×${pkg.height} cm, '
+                            '${pkg.weight} kg)',
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                    ],
+                  )
+              ],
+            ),
           ];
         },
       ),

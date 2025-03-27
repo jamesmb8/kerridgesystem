@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import '../models/lorry_manager.dart';
 import '../models/lorry_model.dart';
 import '../models/package_model.dart';
 import 'layer_buttons.dart';
@@ -29,16 +30,16 @@ class _ResultsScreenState extends State<ResultsScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _recalculateLayout();
+    _recalculateScale();
   }
 
-  void _recalculateLayout() {
+  void _recalculateScale() {
     final lorry = widget.lorries[_selectedLorryIndex];
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     scale = calculateScaleBasedOnScreenDimensions(lorry, screenWidth, screenHeight);
-    lorry.calculatePackagePositions(scale);
   }
+
 
   void _changeLayer(int layerIndex) {
     setState(() {
@@ -51,7 +52,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
     setState(() {
       _selectedLorryIndex = index;
       _selectedLayer = 1;
-      _recalculateLayout();
+      _recalculateScale();
     });
   }
 

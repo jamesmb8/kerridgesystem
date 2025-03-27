@@ -10,6 +10,8 @@ class Package {
   final double width;
 
   int assignedLayer;
+  int? assignedLorryId;
+  //create the package class
 
   Package({
     required this.countId,
@@ -21,7 +23,8 @@ class Package {
     required this.weight,
     required this.radius,
     required this.width,
-    this.assignedLayer = 1,
+    this.assignedLayer = 0,
+    this.assignedLorryId,
   });
 
   factory Package.fromCSV(List<dynamic> csvRow, List<Package> allPackages) {
@@ -35,53 +38,10 @@ class Package {
       weight: double.tryParse(csvRow[6].toString()) ?? 0.0,
       radius: double.tryParse(csvRow[7].toString()) ?? 0.0,
       width: double.tryParse(csvRow[8].toString()) ?? 0.0,
-      assignedLayer: determineLayer(
-        double.tryParse(csvRow[1].toString()) ?? 0.0,
-        double.tryParse(csvRow[6].toString()) ?? 0.0,
-        allPackages,
-      ),
     );
+    //this passes the csv data into a package
   }
-
-
-
-  static int determineLayer(
-      double packageHeight,
-      double packageWeight,
-      List<Package> existingPackages,
-      ) {
-    const double maxLorryHeight = 280.0;
-    const int totalLayers = 5;
-    const double layerHeight = maxLorryHeight / totalLayers;
-
-    List<double> layerHeights = List.filled(totalLayers, 0.0);
-
-
-    List<Package> sortedPackages = List.from(existingPackages)
-      ..sort((a, b) => a.weight.compareTo(b.weight));
-
-    for (var package in sortedPackages) {
-      for (int layer = 0; layer < totalLayers; layer++) {
-        if (layerHeights[layer] + package.height <= layerHeight) {
-          package.assignedLayer = layer + 1;
-          layerHeights[layer] += package.height;
-          break;
-        }
-      }
-    }
-
-
-    for (int layer = 0; layer < totalLayers; layer++) {
-      if (layerHeights[layer] + packageHeight <= layerHeight) {
-        return layer + 1;
-      }
-    }
-
-    return totalLayers;
-  }
-
-
   bool isStackedOnOther() {
     return assignedLayer > 1;
   }
-}
+     }

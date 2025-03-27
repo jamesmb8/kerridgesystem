@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
         ),
         child: Stack(
           children: [
-
+//adding logo
             Positioned(
               left: 20,
               top: 20,
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-
+//tutorial button
             Positioned(
               right: 20,
               top: 35,
@@ -124,6 +124,7 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          //get started button
                         ),
                       ),
                     ),

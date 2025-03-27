@@ -13,11 +13,18 @@ class Lorry {
   final List<Package> packages;
 
   List<Map<String, dynamic>> packagePositions = [];
+  //stores placement details we ue in the pdf's
 
   //the constants
   static const double padding = 2.0;
   static const double maxLorryHeight = 280.0;
   static const double layerHeight = maxLorryHeight / 5;
+
+  final List<List<Rect>> layerRects = List.generate(5, (_) => []);
+  //holds all packages in the layers
+  final List<List<double>> layerWeights = List.generate(5, (_) => []);
+  //checks each layer weight
+
 //creating the lorry instance
   Lorry({
     required this.ID,
@@ -28,84 +35,70 @@ class Lorry {
     required this.packages,
   });
 
-  void calculatePackagePositions(double scale) {
-    debugPrint("Running calculatePackagePositions...");
-    packagePositions.clear();
+  bool tryPlacePackage(Package pkg) {
 
-    const totalLayers = 5;
+
+    final w = pkg.width + padding;
+    final d = pkg.length + padding;
+    final h = pkg.height;
+
     final maxWidth = length * 100;
     final maxDepth = width * 100;
+    final layersRequired = (h / layerHeight).ceil();
+    //adding padding on to packages and see's how many lyers left
 
-    final List<List<Rect>> layerRects = List.generate(totalLayers, (_) => []);
-    final List<List<double>> layerWeights = List.generate(totalLayers, (_) => []);
-//sorting the biggest packages first
-    packages.sort((a, b) {
-      final aMetric = a.length * a.width * a.height;
-      final bMetric = b.length * b.width * b.height;
-      return bMetric.compareTo(aMetric);
-    });
-//adding padding into final package
-    for (final pkg in packages) {
-      final w = pkg.width + padding;
-      final d = pkg.length + padding;
-      final h = pkg.height;
-      final vol = w * d * h;
+    for (int layer = 0; layer <= 5 - layersRequired; layer++) {
+      //Trys to place in first layer each time
+      final avgBelowWeight = layer == 0
+          ? double.infinity
+          : layerWeights.sublist(0, layer).expand((e) => e).fold(0.0, (a, b) => a + b) /
+          layerWeights.sublist(0, layer).expand((e) => e).length;
+      //calculate average weight in layers below the current one
 
-      final layersRequired = (h / layerHeight).ceil();
-      bool placed = false;
+      if (pkg.weight > avgBelowWeight) continue;
+      //if package is now too heavy it wont be placed
 
-      for (int layer = 0; layer <= totalLayers - layersRequired; layer++) {
-        final avgBelowWeight = layer == 0
-            ? double.infinity
-            : layerWeights.sublist(0, layer).expand((e) => e).fold(0.0, (a, b) => a + b) /
-            layerWeights.sublist(0, layer).expand((e) => e).length;
+      for (double x = 0; x <= maxWidth - w; x += 5) {
+        for (double y = 0; y <= maxDepth - d; y += 5) {
+          //brute force every x and y position in the grid, with 5 cm increments
+          final candidate = Rect.fromLTWH(x, y, w, d);
+          final overlaps = layerRects
+          //check for overlaps
+              .sublist(layer, layer + layersRequired)
+              .any((rects) => rects.any((r) => r.overlaps(candidate)));
 
-        if (pkg.weight > avgBelowWeight) continue;
-        //will not place heavier packages on top of others
-
-        for (double x = 0; x <= maxWidth - w; x += 5) {
-          for (double y = 0; y <= maxDepth - d; y += 5) {
-            final candidate = Rect.fromLTWH(x, y, w, d);
-            //checking overlapping
-            final overlaps = layerRects
-                .sublist(layer, layer + layersRequired)
-                .any((rects) => rects.any((r) => r.overlaps(candidate)));
-
-            if (!overlaps) {
-              for (int l = layer; l < layer + layersRequired; l++) {
-                layerRects[l].add(candidate);
-                layerWeights[l].add(pkg.weight);
-              }
-
-              pkg.assignedLayer = layer + 1;
-              //packages placed
-
-              packagePositions.add({
-                "x": x,
-                "y": y,
-                "width": w,
-                "depth": d,
-                "height": h,
-                "layer": layer + 1,
-                "countId": pkg.countId,
-              });
-
-              debugPrint("✅ Placed package ID=${pkg.countId} on layer ${layer + 1}");
-              placed = true;
-              break;
+          if (!overlaps) {
+            for (int l = layer; l < layer + layersRequired; l++) {
+              layerRects[l].add(candidate);
+              layerWeights[l].add(pkg.weight);
+              //add the package in the layer and weight
             }
-          }
-          if (placed) break;
-        }
-        if (placed) break;
-      }
 
-      if (!placed) {
-        debugPrint("⚠️ Could not place package ID=${pkg.countId}");
+            pkg.assignedLayer = layer + 1;
+            pkg.assignedLorryId = ID;
+            packages.add(pkg);
+            //add this info into packages
+
+            packagePositions.add({
+              "x": x,
+              "y": y,
+              "width": w,
+              "depth": d,
+              "height": h,
+              "layer": layer + 1,
+              "countId": pkg.countId,
+              "lorryId": ID,
+            });
+            //save the exact spot
+
+            return true;
+          }
+        }
       }
     }
 
-    debugPrint("✅ Finished placement: ${packagePositions.length} packages placed");
+    return false;
   }
+
 
 }

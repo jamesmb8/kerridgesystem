@@ -3,26 +3,34 @@ import 'package_model.dart';
 
 class LorryManager {
   final List<Lorry> lorries = [];
-  final double maxWeight = 10000;
 
   LorryManager(List<Package> packages) {
-    packages.sort((a, b) => b.weight.compareTo(a.weight));
+    packages.sort((a, b) => b.volume.compareTo(a.volume));
+    //sort packages by volume
 
-    int lorryId = 1;
-    Lorry currentLorry = Lorry(ID: lorryId, packages: []);
-    double currentWeight = 0;
+    int lorryIdCounter = 1;
+    //start lorry id counter
 
-    for (var pkg in packages) {
-      if (currentWeight + pkg.weight <= maxWeight) {
-        currentLorry.packages.add(pkg);
-        currentWeight += pkg.weight;
-      } else {
-        lorries.add(currentLorry);
-        lorryId++;
-        currentLorry = Lorry(ID: lorryId, packages: [pkg]);
-        currentWeight = pkg.weight;
+    for (final pkg in packages) {
+      bool placed = false;
+      //every package starts at false
+
+      for (final lorry in lorries) {
+        if (lorry.tryPlacePackage(pkg)) {
+          placed = true;
+          break;
+        }
+        //try placing the packages in current lorry
+      }
+
+      if (!placed) {
+        final newLorry = Lorry(ID: lorryIdCounter++, packages: []);
+        if (newLorry.tryPlacePackage(pkg)) {
+          lorries.add(newLorry);
+        }
+        //make a new lorry if packages cant be placed
       }
     }
-    lorries.add(currentLorry);
   }
 }
+
