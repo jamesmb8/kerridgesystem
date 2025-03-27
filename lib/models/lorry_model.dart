@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../ui/lorry_painter.dart';
 
 
-
+//creating the lorry class
 class Lorry {
   final int ID;
   final double length;
@@ -14,10 +14,11 @@ class Lorry {
 
   List<Map<String, dynamic>> packagePositions = [];
 
+  //the constants
   static const double padding = 2.0;
   static const double maxLorryHeight = 280.0;
   static const double layerHeight = maxLorryHeight / 5;
-
+//creating the lorry instance
   Lorry({
     required this.ID,
     this.length = 14.0,
@@ -37,13 +38,13 @@ class Lorry {
 
     final List<List<Rect>> layerRects = List.generate(totalLayers, (_) => []);
     final List<List<double>> layerWeights = List.generate(totalLayers, (_) => []);
-
+//sorting the biggest packages first
     packages.sort((a, b) {
       final aMetric = a.length * a.width * a.height;
       final bMetric = b.length * b.width * b.height;
       return bMetric.compareTo(aMetric);
     });
-
+//adding padding into final package
     for (final pkg in packages) {
       final w = pkg.width + padding;
       final d = pkg.length + padding;
@@ -60,10 +61,12 @@ class Lorry {
             layerWeights.sublist(0, layer).expand((e) => e).length;
 
         if (pkg.weight > avgBelowWeight) continue;
+        //will not place heavier packages on top of others
 
         for (double x = 0; x <= maxWidth - w; x += 5) {
           for (double y = 0; y <= maxDepth - d; y += 5) {
             final candidate = Rect.fromLTWH(x, y, w, d);
+            //checking overlapping
             final overlaps = layerRects
                 .sublist(layer, layer + layersRequired)
                 .any((rects) => rects.any((r) => r.overlaps(candidate)));
@@ -75,6 +78,7 @@ class Lorry {
               }
 
               pkg.assignedLayer = layer + 1;
+              //packages placed
 
               packagePositions.add({
                 "x": x,

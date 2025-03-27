@@ -11,12 +11,12 @@ class HomePage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.pink], // Softer pink for a premium look
+            colors: [Colors.white, Colors.pink],
           ),
         ),
         child: Stack(
           children: [
-            // Logo - Adjusted positioning for better responsiveness
+
             Positioned(
               left: 20,
               top: 20,
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Tutorial Button - Styled to be more modern
+
             Positioned(
               right: 20,
               top: 35,
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Main Content
+
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -64,7 +64,7 @@ class HomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Welcome Title
+
                     const Text(
                       "Welcome",
                       style: TextStyle(
@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 30),
 
-                    // Description Text
+
                     const Text(
                       "We are a small team ensuring the most reliable and efficient transportation of stocks—legally and successfully!",
                       style: TextStyle(
@@ -89,7 +89,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Get Started Info
+
                     const Text(
                       "We are excited to introduce our most efficient truck loading strategy. Press the button below to begin!",
                       style: TextStyle(
@@ -102,7 +102,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 40),
 
-                    // Get Started Button - Now larger and more engaging
+
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(

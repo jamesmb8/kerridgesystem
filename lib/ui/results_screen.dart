@@ -75,7 +75,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
         ),
         child: Column(
           children: [
-            // Header: Logo + PDF + Back
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(

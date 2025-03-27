@@ -29,7 +29,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
         List<List<dynamic>> csvTable = CsvToListConverter(eol: "\n").convert(
             content);
 
-        print("CSV Raw Data: $csvTable"); // Debugging: Check CSV contents
+        print("CSV Raw Data: $csvTable");
 
         if (csvTable.isEmpty) {
           print("CSV file is empty!");
@@ -38,10 +38,10 @@ class _UploaderScreenState extends State<UploaderScreen> {
 
         List<Package> loadedPackages = [];
 
-        for (int i = 1; i < csvTable.length; i++) { // Skip header row
+        for (int i = 1; i < csvTable.length; i++) {
           List<dynamic> row = csvTable[i];
 
-          print("Row $i: $row"); // Debugging: Print each row
+          print("Row $i: $row");
 
           try {
             Package package = Package(
@@ -58,7 +58,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
 
             print("Package loaded: ${package.countId} - ${package
                 .length} x ${package.width} x ${package.height}");
-            // Debugging: Show package object
+
 
             loadedPackages.add(package);
           } catch (e) {
@@ -114,7 +114,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
           children: [
             Positioned(
               left: 10,
-              top: 10, // Ensures the logo doesn't overlap content
+              top: 10,
               child: Image.asset(
                 "assets/images/logoKerridge.png",
                 height: 100,
@@ -149,14 +149,14 @@ class _UploaderScreenState extends State<UploaderScreen> {
 
 
             Center(
-              child: SingleChildScrollView( // 🔥 Prevents bottom overflow
+              child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
                     width: double.infinity,
-                    // Allows content to expand properly
+
                     constraints: const BoxConstraints(maxWidth: 400),
-                    // Limits width for better UI
+
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,

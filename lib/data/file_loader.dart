@@ -16,8 +16,8 @@ class FileLoader {
     if (result != null) {
       final file = result.files.single;
       final content = file.bytes != null
-          ? utf8.decode(file.bytes!) // ✅ Web
-          : await File(file.path!).readAsString(); // ✅ Desktop
+          ? utf8.decode(file.bytes!)
+          : await File(file.path!).readAsString();
 
       List<List<dynamic>> csvTable = CsvToListConverter().convert(content);
 

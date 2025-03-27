@@ -56,7 +56,7 @@ class Package {
 
     List<double> layerHeights = List.filled(totalLayers, 0.0);
 
-    // Sort the existing packages by weight before assigning layers
+
     List<Package> sortedPackages = List.from(existingPackages)
       ..sort((a, b) => a.weight.compareTo(b.weight));
 
@@ -70,18 +70,18 @@ class Package {
       }
     }
 
-    // Now find where the new package fits
+
     for (int layer = 0; layer < totalLayers; layer++) {
       if (layerHeights[layer] + packageHeight <= layerHeight) {
         return layer + 1;
       }
     }
 
-    return totalLayers; // Default to the top layer
+    return totalLayers;
   }
 
 
   bool isStackedOnOther() {
-    return assignedLayer > 1; // A package is stacked on another if it's not on the first layer
+    return assignedLayer > 1;
   }
 }
