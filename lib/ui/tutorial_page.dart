@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'welcome_screen.dart';
 import 'uploader_screen.dart';
+import '../data/template_downloader.dart';
+
 
 class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});
@@ -48,7 +51,6 @@ class TutorialPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-
                   ),
                 ),
               ),
@@ -60,7 +62,6 @@ class TutorialPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Title
                     const Text(
                       "TUTORIAL",
                       style: TextStyle(
@@ -71,8 +72,6 @@ class TutorialPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Content Card
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -89,7 +88,6 @@ class TutorialPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Section 1: How to Use the System
                           const Text(
                             "How to Use Our System:",
                             style: TextStyle(
@@ -105,7 +103,6 @@ class TutorialPage extends StatelessWidget {
                             textAlign: TextAlign.justify,
                           ),
                           const SizedBox(height: 10),
-                          // Bullet Points
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
@@ -121,8 +118,6 @@ class TutorialPage extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 20),
-
-                          // Section 2: Understanding the System
                           const Text(
                             "How to Understand the System:",
                             style: TextStyle(
@@ -145,7 +140,7 @@ class TutorialPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           const Text(
-                            "• You can press the right arrow to view the next lorry if multiple are needed.",
+                            "• You can press the drop-down button to view the next lorry if multiple are needed.",
                             style: TextStyle(fontSize: 16),
                             textAlign: TextAlign.justify,
                           ),
@@ -156,8 +151,22 @@ class TutorialPage extends StatelessWidget {
                             textAlign: TextAlign.justify,
                           ),
                           const SizedBox(height: 20),
-
-
+                          Center(
+                            child: ElevatedButton.icon(
+                              onPressed: () => downloadCSVTemplate(context),
+                              icon: const Icon(Icons.download),
+                              label: const Text("Download CSV Template"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.pink.shade300,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           const Text(
                             "Thank you for using our system!",
                             style: TextStyle(
