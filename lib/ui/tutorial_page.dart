@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'welcome_screen.dart';
 import 'uploader_screen.dart';
-import '../data/template_downloader.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 
