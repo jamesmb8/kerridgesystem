@@ -10,10 +10,10 @@ class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});
 
   Future<void> _downloadTemplate() async {
-    const url = 'https://raw.githubusercontent.com/jamesmb8/kerridgesystem/main/template/Templatecsv.csv';
+    const url = 'https://github.com/jamesmb8/kerridgesystem/releases/download/v1.1.4/Templatecsv.csv';
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       throw '❌ Could not launch $url';
     }
