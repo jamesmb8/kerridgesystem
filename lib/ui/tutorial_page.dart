@@ -3,10 +3,22 @@ import 'package:flutter/services.dart';
 import 'welcome_screen.dart';
 import 'uploader_screen.dart';
 import '../data/template_downloader.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});
+
+  Future<void> _downloadTemplate() async {
+    const url = 'https://raw.githubusercontent.com/jamesmb8/kerridgesystem/main/template/Templatecsv.csv';
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw '❌ Could not launch $url';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +165,7 @@ class TutorialPage extends StatelessWidget {
                           const SizedBox(height: 20),
                           Center(
                             child: ElevatedButton.icon(
-                              onPressed: () => downloadCSVTemplate(context),
+                              onPressed: _downloadTemplate,
                               icon: const Icon(Icons.download),
                               label: const Text("Download CSV Template"),
                               style: ElevatedButton.styleFrom(
@@ -164,7 +176,8 @@ class TutorialPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                            ),
+                            )
+
                           ),
                           const SizedBox(height: 20),
                           const Text(
