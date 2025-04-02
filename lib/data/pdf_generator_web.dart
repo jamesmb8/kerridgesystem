@@ -6,11 +6,13 @@ import '../models/lorry_model.dart';
 
 Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale) async {
   final pdf = pw.Document();
+  //creates a new pdf and sets the size for the pdf
 
   const double canvasWidth = 565;
   const double canvasHeight = 113;
 
   for (final lorry in lorries) {
+    //loops through each lorry
 
 
     pdf.addPage(
@@ -22,8 +24,10 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                 style: pw.TextStyle(
                     fontSize: 24, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 10),
+            //adds a lorry ID header for each lorry
 
             for (int layer = 1; layer <= 5; layer++) ...[
+              //loops through each layer
               pw.Text("Layer $layer", style: const pw.TextStyle(fontSize: 18)),
               pw.Container(
                 width: canvasWidth,
@@ -38,6 +42,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                         pw.Positioned(
                           left: pkg["x"] * 0.4,
                           top: pkg["y"] * 0.4,
+                          //scaling the packages
 
                           child: pw.SizedBox(
                             width: pkg["width"] * 0.4,
@@ -46,6 +51,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                             decoration: pw.BoxDecoration(
                               color: PdfColors.pink100,
                               border: pw.Border.all(width: 0.5),
+                              //draw the packages
                             ),
                             alignment: pw.Alignment.center,
                             child: pw.Text(pkg["countId"].toString(),
@@ -67,6 +73,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
             ],
             pw.Text("Package Checklist", style: const pw.TextStyle(fontSize: 18)),
             pw.SizedBox(height: 5),
+            //Checklist header
             pw.Wrap(
               spacing: 10,
               runSpacing: 4,
@@ -80,6 +87,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                         height: 10,
                         decoration: pw.BoxDecoration(
                           border: pw.Border.all(width: 0.5),
+                          //checkbox
                         ),
                       ),
                       pw.SizedBox(width: 5),
@@ -88,6 +96,7 @@ Future<void> generateAndDownloadPdfFromLorries(List<Lorry> lorries, double scale
                             '(${pkg.length}×${pkg.width}×${pkg.height} cm, '
                             '${pkg.weight} kg)',
                         style: const pw.TextStyle(fontSize: 8),
+                        //package dimensions next to checkbox
                       ),
                     ],
                   )

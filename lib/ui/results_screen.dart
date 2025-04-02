@@ -26,11 +26,13 @@ class _ResultsScreenState extends State<ResultsScreen> {
   int _selectedLorryIndex = 0;
   int? _highlightedPackageId;
   double scale = 1.0;
+  //making my variables: selected layer, selected package and scale
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _recalculateScale();
+    //changes scale due to screensize
   }
 
   void _recalculateScale() {
@@ -39,6 +41,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     scale = calculateScaleBasedOnScreenDimensions(lorry, screenWidth, screenHeight);
   }
+  //calculates scales due to size of screen size.
 
 
   void _changeLayer(int layerIndex) {
@@ -46,6 +49,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       _selectedLayer = layerIndex;
     });
   }
+  //changes layer when the user presses a different layer
 
   void _changeLorry(int? index) {
     if (index == null) return;
@@ -53,18 +57,21 @@ class _ResultsScreenState extends State<ResultsScreen> {
       _selectedLorryIndex = index;
       _selectedLayer = 1;
       _recalculateScale();
+      //first layer will show for the next lorry
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final currentLorry = widget.lorries[_selectedLorryIndex];
+    //gets the current selected lorry
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         toolbarHeight: 0,
+        //no app bar
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -80,39 +87,38 @@ class _ResultsScreenState extends State<ResultsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset("assets/images/logoKerridge.png", height: 80),
-                  Row(
-                    children: [
-                      PDFButton(
-                        lorries: widget.lorries,
-                        scale: scale,
-                        color: Colors.pinkAccent,
-                        iconOnly: true,
+
+                  const SizedBox(width: 10),
+                  PDFButton(
+                    lorries: widget.lorries,
+                    scale: scale,
+                    color: Colors.pinkAccent,
+                    iconOnly: true,
+                  ),
+                  //download pdf button
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    //goes back
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF189281),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF189281),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text(
-                          "Back",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      "Back",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
             ),
+
 
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -120,6 +126,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 "Lorry Visualisation & Package Layout",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.pink.shade300),
               ),
+              //title for the page
             ),
 
             // Lorry visual with Front/Back labels
@@ -168,6 +175,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             const Divider(),
 
             Padding(
+              //layer buttons
               padding: const EdgeInsets.only(top: 10.0),
               child: LayerButtons(
                 selectedLayer: _selectedLayer,
@@ -176,6 +184,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
 
             Padding(
+              //lorry dropdown buttons
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
               child: DropdownButton<int>(
                 value: _selectedLorryIndex,
@@ -195,6 +204,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
 
             Padding(
+              //package list header
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Packages in Lorry ${currentLorry.ID}",
@@ -203,6 +213,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ),
 
             Expanded(
+              //clickable list of all packages
               flex: 2,
               child: currentLorry.packages.isEmpty
                   ? const Center(child: Text("No packages loaded", style: TextStyle(color: Colors.red)))
@@ -226,6 +237,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         setState(() {
                           _highlightedPackageId = package.countId;
                           _selectedLayer = package.assignedLayer;
+                          //highlight the package and shows the layer
                         });
                       },
                     ),
@@ -243,5 +255,6 @@ class _ResultsScreenState extends State<ResultsScreen> {
     double widthScale = screenWidth / (lorry.length * 100);
     double heightScale = screenHeight / (lorry.width * 100);
     return (widthScale < heightScale ? widthScale : heightScale).clamp(0.1, 1.0);
+
   }
 }

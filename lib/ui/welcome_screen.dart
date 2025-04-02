@@ -16,17 +16,10 @@ class HomePage extends StatelessWidget {
         ),
         child: Stack(
           children: [
-//adding logo
-            Positioned(
-              left: 20,
-              top: 20,
-              child: Image.asset(
-                "assets/images/logoKerridge.png",
-                height: 100,
-              ),
-            ),
 
-//tutorial button
+
+
+            //tutorial button
             Positioned(
               right: 20,
               top: 35,

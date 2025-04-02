@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});
 
+  //download the csv template
   Future<void> _downloadTemplate() async {
     const url = 'https://github.com/jamesmb8/kerridgesystem/releases/download/v1.1.4/Templatecsv.csv';
     final Uri uri = Uri.parse(url);
@@ -34,13 +35,7 @@ class TutorialPage extends StatelessWidget {
         child: Stack(
           children: [
             // Logo
-            Positioned(
-              left: 10,
-              child: Image.asset(
-                "assets/images/logoKerridge.png",
-                height: 125,
-              ),
-            ),
+
             // Back Button
             Positioned(
               right: 10,
@@ -75,6 +70,7 @@ class TutorialPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
+                      //tutorial header
                       "TUTORIAL",
                       style: TextStyle(
                         fontSize: 28,
@@ -97,6 +93,7 @@ class TutorialPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      //start of the tutorial information
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -128,6 +125,7 @@ class TutorialPage extends StatelessWidget {
                               Text("• Radius ()", style: TextStyle(fontSize: 16)),
                               Text("• Width ()", style: TextStyle(fontSize: 16)),
                             ],
+                            //how to format the csv table
                           ),
                           const SizedBox(height: 20),
                           const Text(

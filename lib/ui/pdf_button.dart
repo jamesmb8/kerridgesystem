@@ -34,6 +34,7 @@ class PDFButton extends StatelessWidget {
     return iconOnly
         ? IconButton(
       icon: Icon(Icons.download, color: color ?? Colors.pinkAccent),
+      //creating the pdf button
       onPressed: () => _generate(context),
     )
         : ElevatedButton(

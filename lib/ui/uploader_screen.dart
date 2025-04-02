@@ -78,7 +78,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
       print("Error loading CSV: $e");
     }
   }
-
+//goes to results screen when loaded with package
   void goToResultsScreen() {
     if (packages.isEmpty) {
 
@@ -89,6 +89,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
       return;
     }
     final manager = LorryManager(packages);
+    //generates lorries with packages
 
 
     print("Navigating to ResultsScreen with ${packages.length} packages.");
@@ -112,15 +113,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
         ),
         child: Stack(
           children: [
-            Positioned(
-              left: 10,
-              top: 10,
-              child: Image.asset(
-                "assets/images/logoKerridge.png",
-                height: 100,
-              ),
-              
-            ),
+
             Positioned(
               right: 10,
               top: 30,
@@ -128,6 +121,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
+                //goes back
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF189281),
                   foregroundColor: Colors.white,
@@ -156,6 +150,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
                     width: double.infinity,
 
                     constraints: const BoxConstraints(maxWidth: 400),
+                    //max width on screens
 
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -184,6 +179,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
+                          //upload the csv button
                           onPressed: loadCSV,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF189281),
@@ -203,6 +199,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500),
                             textAlign: TextAlign.center,
+                            //shows how many packages are loaded
                           ),
                           const SizedBox(height: 10),
                           ElevatedButton(
@@ -214,6 +211,7 @@ class _UploaderScreenState extends State<UploaderScreen> {
                                   horizontal: 50, vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
+                                //button to go to results screen
                               ),
                             ),
                             child: const Text("View Results"),
