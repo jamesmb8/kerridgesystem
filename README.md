@@ -2,6 +2,11 @@
 
 
 This project allows the user to upload a csv full of packages and then our program will show the best ways to load the lorries with the packages.
+
+## Screenshot
+<img width="666" height="352" alt="Screenshot 2026-06-24 223014" src="https://github.com/user-attachments/assets/103729c0-25f9-48e4-99be-472d863c7fa3" />
+
+
 ## To download the app
 ### MacOS
 Go to Actions > V 1.1.5 (Build macOS App), the artifact will be shown as macos-kerridgesystem. Download that and the application will be in your downloads called kerridgesystem.
